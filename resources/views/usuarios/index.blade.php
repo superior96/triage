@@ -27,78 +27,81 @@
 		<input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Nombre" title="Introduzca el nombre del protocolo">
 	</div>
 </div>
-<table id="myTable" class="table" cellspacing="0" width="100%">
-	<thead class="thead-dark">
-		<tr>
-			<th scope="col" style="width:20%">Nombre</th>
-			<th scope="col" style="width:20%">Usuario</th>
-			<th scope="col" style="width:30%">Email</th>
-			<th scope="col" style="width:15%">Rol</th>
-			<th scope="col" style="width:15%">Acción<nav></nav></th>
-		</tr>
-	</thead>
-	<tbody id="tabla">
-	@foreach($usuarios as $usuario)
-		<tr>
-			<td>{{ $usuario->name }}</td>
-			<td>{{ $usuario->username }}</td>
-			<td>{{ $usuario->email }}</td>
-			<td>{{ $usuario->rol->nombre }}</td>
-			<td>
-				<div class="form-row">
-					<!-- Button trigger modal -->
-					<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#exampleModalCenter{{$usuario->id}}">Ver</button>
-					<!-- Modal -->
-					<div class="modal fade" id="exampleModalCenter{{$usuario->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-					<div class="modal-dialog modal-dialog-centered" role="document">
-						<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="exampleModalLongTitle">Datos de Usuario</h5>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-							</button>
+<div class="table-responsive">
+  
+	<table id="myTable" class="table" cellspacing="0" width="100%">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col" style="width:20%">Nombre</th>
+				<th scope="col" style="width:10%">Usuario</th>
+				<th scope="col" style="width:30%">Email</th>
+				<th scope="col" style="width:15%">Rol</th>
+				<th scope="col" style="width:15%">Acción<nav></nav></th>
+			</tr>
+		</thead>
+		<tbody id="tabla">
+			@foreach($usuarios as $usuario)
+			<tr>
+				<td>{{ $usuario->name }}</td>
+				<td>{{ $usuario->username }}</td>
+				<td>{{ $usuario->email }}</td>
+				<td>{{ $usuario->rol->nombre }}</td>
+				<td>
+					<div class="form-row">
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#exampleModalCenter{{$usuario->id}}">Ver</button>
+						<!-- Modal -->
+						<div class="modal fade" id="exampleModalCenter{{$usuario->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title" id="exampleModalLongTitle">Datos de Usuario</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<div class="modal-body">
+										@if($usuario->profesional)
+											<div class="col-md-4 text-md-right">
+												<h5>Nombre:</h5>			
+											</div>
+											<div class="col-md-6">
+												<h5>{{$usuario->profesional->nombre}}</h5>		
+											</div>
+											<div class="col-md-4 text-md-right">
+												<h5>Apellido:</h5>			
+											</div>
+											<div class="col-md-6">
+												<h5>{{$usuario->profesional->apellido}}</h5>		
+											</div>
+											<div class="col-md-4 text-md-right">
+												<h5>Domicilio:</h5>			
+											</div>
+											<div class="col-md-6">
+												<h5>{{$usuario->profesional->domicilio}}</h5>		
+											</div>
+										@else
+										<h5>No hay más datos para este usuario</h5>
+										@endif
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+							</div>
 						</div>
-						<div class="modal-body">
-							@if($usuario->profesional)
-								<div class="col-md-4 text-md-right">
-									<h5>Nombre:</h5>			
-								</div>
-								<div class="col-md-6">
-									<h5>{{$usuario->profesional->nombre}}</h5>		
-								</div>
-								<div class="col-md-4 text-md-right">
-									<h5>Apellido:</h5>			
-								</div>
-								<div class="col-md-6">
-									<h5>{{$usuario->profesional->apellido}}</h5>		
-								</div>
-								<div class="col-md-4 text-md-right">
-									<h5>Domicilio:</h5>			
-								</div>
-								<div class="col-md-6">
-									<h5>{{$usuario->profesional->domicilio}}</h5>		
-								</div>
-							@else
-								<h5>No hay más datos para este usuario</h5>
-							@endif
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-						</div>
-						</div>
+						<form id="a2" name="{{$usuario->username}}" action="usuarios/{{$usuario->id}}" method="post">
+							@csrf
+							{{method_field('DELETE')}}
+							<button type="submit" class="btn btn-danger btn-sm" value="{{$usuario->id}}">Eliminar</button>
+						</form>
 					</div>
-					</div>
-					<form id="a2" name="{{$usuario->username}}" action="usuarios/{{$usuario->id}}" method="post">
-						@csrf
-						{{method_field('DELETE')}}
-						<button type="submit" class="btn btn-danger btn-sm" value="{{$usuario->id}}">Eliminar</button>
-					</form>
-				</div>
-			</td>
-		</tr>
-	@endforeach
-	</tbody>
-</table>
+				</td>
+			</tr>
+			@endforeach
+		</tbody>
+	</table>
+</div>
 
 
 
