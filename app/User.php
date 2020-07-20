@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Cache;
 
 class User extends Authenticatable
 {
@@ -16,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'username', 'id_rol',
+        'name', 'email', 'password', 'username', 'id_rol',# 'estado',
     ];
 
     /**
@@ -52,5 +53,8 @@ class User extends Authenticatable
     public function profesional()
     {
         return $this->hasOne('App\Profesional', 'id_user');
+    }
+    public function isOnline(){
+        return Cache::has('user-is-online-'.$this->id);
     }
 }

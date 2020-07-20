@@ -97,18 +97,28 @@ class usuariosController extends Controller
      */
     public function destroy(Request $request, $id)
     {
-        if(Auth::user()->esAdmin()){
-            if(! User::find($id)->esAdmin()){
+        $aux = User::find($id)->username;
+        if(Auth::user()->esAdmin()){ # El usuario logueado es Administrador?
+            if(! User::find($id)->esAdmin()){ # El usuario que se quiere eliminar es administrador?
                 if(User::destroy($id)){
-                    $msj="El usuario se ha eliminado"; #No hace nada por ahora
+                    $request->session()->flash('alert-success', 'El usuario '.$aux.' fue eliminado exitosamente!');
                 }else{
-                    $msj="Tal vez alguien ya eliminó al usuario"; #No hace nada por ahora
+                    $request->session()->flash('alert-danger', 'Hubo un problema para eliminar al usuario '.$aux);
                 }
             }else{
-                $request->session()->flash('alert-warning', 'Solo el usuario '.User::find(1)->username.' puede eliminar a los usuarios Administradores!');                
+                if(Auth::id()==1){ # El usuario logueado es Super Administrador?
+                    if(User::destroy($id)){
+                        $request->session()->flash('alert-success', 'El usuario '.$aux.' fue eliminado exitosamente!');
+                    }else{
+                        $request->session()->flash('alert-danger', 'Hubo un problema para eliminar al usuario '.$aux);
+                    }
+                }else{
+                    $request->session()->flash('alert-warning', 'Solo el usuario '.User::find(1)->username.' puede eliminar a los usuarios Administradores!');
+                }
             }
+        }else{ # Si no es administrador entonces no puede eliminar usuarios
+            $request->session()->flash('alert-warning', 'Debes ser administrador para eliminar otros usuarios!');
         }
-        $request->session()->flash('alert-warning', 'Necesitas ser Administrador para poder eliminar al usuario!');
         return redirect()->back();
     }
 
@@ -122,6 +132,7 @@ class usuariosController extends Controller
     // }
     public function register(Request $request)
     {
+        echo "entro register";
         if (Auth::user()->esAdmin()){
             $this->validator($request->all())->validate();
             event(new Registered($user = $this->create2($request->all())));
@@ -132,10 +143,10 @@ class usuariosController extends Controller
             $request->session()->flash('alert-success', 'El usuario se ha creado exitosamente!');
             return $request->wantsJson()
                         ? new Response('', 201)
-                        : redirect()->back();
+                        : redirect()->back()->withInput();
         }else{
             $request->session()->flash('alert-warning', 'Necesitas ser Administrador para realizar la registración de un nuevo usuario!');
-            return redirect()->back();
+            return redirect()->back()->withInput();
         }
     }
 
@@ -189,7 +200,6 @@ class usuariosController extends Controller
     //  */
     protected function validator(array $data)
     {
-        echo "antes de validator";
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
@@ -197,7 +207,6 @@ class usuariosController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'id_rol' => ['required', 'exists:roles,id'],
         ]);
-        echo "paso validator";
     }
 
     // /**

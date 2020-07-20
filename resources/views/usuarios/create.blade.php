@@ -87,7 +87,7 @@
             <select name="id_rol" id="id_rol" class="form-control">
                 <option value=""></option>
                 @foreach($roles as $rol)
-                <option value="{{$rol->id}}">{{$rol->nombre}}</option>
+                <option value="{{$rol->id}}" {{ old('id_rol')==$rol->id ? 'selected': '' }}>{{$rol->nombre}}</option>
                 @endforeach
             </select>
             @error('id_rol')

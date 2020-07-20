@@ -32,18 +32,24 @@
 	<table id="myTable" class="table" cellspacing="0" width="100%">
 		<thead class="thead-dark">
 			<tr>
-				<th scope="col" style="width:20%">Nombre</th>
-				<th scope="col" style="width:10%">Usuario</th>
+				<th scope="col" style="width:20%">Usuario</th>
+				<th scope="col" style="width:15%">Estado</th>
 				<th scope="col" style="width:30%">Email</th>
-				<th scope="col" style="width:15%">Rol</th>
+				<th scope="col" style="width:20%">Rol</th>
 				<th scope="col" style="width:15%">Acción<nav></nav></th>
 			</tr>
 		</thead>
 		<tbody id="tabla">
 			@foreach($usuarios as $usuario)
 			<tr>
-				<td>{{ $usuario->name }}</td>
 				<td>{{ $usuario->username }}</td>
+				<td>
+				@if( $usuario->isOnline() )
+					<li class="text-success">Online</li>
+				@else
+					<li class="text-muted">Offline</li>
+				@endif
+				</td>				
 				<td>{{ $usuario->email }}</td>
 				<td>{{ $usuario->rol->nombre }}</td>
 				<td>
@@ -93,7 +99,11 @@
 						<form id="a2" name="{{$usuario->username}}" action="usuarios/{{$usuario->id}}" method="post">
 							@csrf
 							{{method_field('DELETE')}}
-							<button type="submit" class="btn btn-danger btn-sm" value="{{$usuario->id}}">Eliminar</button>
+							@if(Auth::id()==$usuario->id)
+								<button type="submit" class="btn btn-danger btn-sm" value="{{$usuario->id}}" disabled>Eliminar</button>
+							@else
+								<button type="submit" class="btn btn-danger btn-sm" value="{{$usuario->id}}">Eliminar</button>
+							@endif
 						</form>
 					</div>
 				</td>
